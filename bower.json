@@ -1,0 +1,27 @@
+{
+  "name": "deko-deck-editor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "deko-deck-editor.html",
+  "keywords": [
+    "polymer",
+    "web-components"
+  ],
+  "dependencies": {
+    "input-image": "marcus7777/input-image",
+    "iron-icon": "PolymerElements/iron-icon",
+    "paper-button": "PolymerElements/paper-button#~1.0.14",
+    "paper-fab": "PolymerElements/paper-fab",
+    "paper-button-group": "Protoss78/paper-button-group#~0.0.1",
+    "paper-dialog-scrollable": "*",
+    "paper-dialog": "PolymerElements/paper-dialog",
+    "card-info-link-input": "marcus7777/card-info-link-input"
+  },
+  "devDependencies": {
+    "iron-test-helpers": "*",
+    "web-component-tester": "^5.0.0"
+  },
+  "resolutions": {
+    "iron-a11y-keys-behavior": "^1.1.5"
+  }
+}
