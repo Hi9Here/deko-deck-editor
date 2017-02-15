@@ -1,0 +1,208 @@
+<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../card-info-link-input/card-info-link-input.html">
+<link rel="import" href="../paper-button-group/paper-button-group.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../link-display/link-display.html">
+<link rel="import" href="../paper-input/paper-textarea.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../input-image/input-image.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+<link rel="import" href="../paper-styles/color.html">
+<dom-module id="deko-deck-editor">
+  <template>
+    <style>
+      #cardInputs {
+        margin: 15px
+      }
+      .templateButtons {
+        text-align: center;
+        margin-top: 40px;
+      }
+      paper-button-group {
+        margin: 15px;
+      }
+      paper-fab {
+        position: fixed;
+        right: 25px;
+        bottom: 30px;          
+      }
+    </style>
+    <template is="dom-if" if="[[!noAdd]]">
+      <paper-fab icon="add" on-tap="add"></paper-fab>
+    </template>
+    <paper-dialog id="dialog" modal>
+      <paper-dialog-scrollable>
+        <paper-button-group selected="{{useTemplate}}">
+          <template is="dom-repeat" items="{{objectToArray(theTemplates)}}">
+            <paper-button name="{{item.$key}}" raised><iron-icon icon="{{item.icon}}"></iron-icon></paper-button>
+          </template>
+        </paper-button-group>
+        <div id="cardInputs" inner-h-t-m-l="[[inputFrom]]"></div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button on-tap="delete" style="color: #333;">Delete</paper-button>
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-tap="save" raised style="background: #ff4081; color: #fff;">Save</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'deko-deck-editor',
+      properties: {
+        card: {
+          type: Object,
+          notify: true,
+        },
+        inputFrom:String,
+        updateValues: {
+          computed: ("getUpdateValues(card.*)")
+        },
+        usedTemplate: {
+          computed: "getUsedTemplate(theTemplates, card, useTemplates)"
+        },
+        noAdd:{
+          type:Boolean,
+          value:false,
+        },
+        useTemplates: {
+          type: Object
+        },
+        useTemplate: {
+          value:"link"
+        },
+        theTemplates: {
+          value:{
+            link: {
+              input: "<card-info-link-input label=\"link\"></card-info-link-input>", 
+              icon: "bookmark",
+              cardType: "link-display",
+            },
+          }
+        },
+        theTemplate: {
+          computed: "setTemplate(useTemplate, usedTemplate, theTemplates, useTemplates)"
+        }
+      },
+      getInputFrom: function(form) {
+        this.async(this.getUpdateValues, 100) // let it load
+        return form
+      },
+      getUsedTemplate: function(theTemplates, card, useTemplates) {
+        if (!useTemplates) {
+          return this.objectToArray(theTemplates)[0]["__key"]
+        } else {
+          if (typeof useTemplates === "string") {
+            useTemplates = JSON.parse(useTemplates)
+          }
+          return this.objectToArray(useTemplates)[0]["__key"]
+        }
+        // rem \/
+        return this.objectToArray(theTemplates).reduce(function(previousValue, currentValue){
+          if (currentValue.output == card.output) {
+            return currentValue["$key"]
+          } else {
+            return previousValue
+          }
+        }, "")
+      },
+      setTemplate: function(useTemplate, usedTemplate, theTemplates, useTemplates) {
+        if (!this.card){
+          this.card = {}
+        }
+        if (useTemplates) {
+          if (typeof useTemplates === "string") {
+            useTemplates = JSON.parse(useTemplates)
+          }
+          this.card.cardType = useTemplates[useTemplate].cardType
+          return this.card.input = useTemplates[useTemplate].input
+        } else if (useTemplate) {
+          this.card.cardType = theTemplates[useTemplate].cardType
+          return this.card.input = theTemplates[useTemplate].input
+        } else if (this.card.input) {
+          return this.card.input
+        }
+      },
+      getUpdateValues: function(card) {
+        if (card) {
+          this.async(this.getUpdateValues, 100) // let it load
+        } else {
+          if (!this.card) {
+            this.card = {}
+          }
+          var inputForm = this.$$("#cardInputs")
+          var items = inputForm.querySelectorAll("[label]")
+          for (var i=0, max=items.length; i < max; i++) {
+            if (this.card.hasOwnProperty(items[i].label)) {
+              items[i].value = this.card[items[i].label]
+            }
+          }
+          return "Done"
+        }
+      },
+      save: function() {
+        if (!this.card){
+          this.card = {}
+        }
+        if (this.card.cardIcon) {
+          delete(this.card.cardIcon)
+        }
+        var inputForm = this.$$("#cardInputs")
+        var items = inputForm.querySelectorAll("[label]")
+        for (var i=0, max=items.length; i < max; i++) {
+          if (items[i].value) {
+            this.card[items[i].label] = items[i].value
+          }
+        }
+        this.close('save')
+      },
+      delete: function() {
+        this.close('delete')
+      },
+      close: function(detail) {
+        var inputForm = this.$$("#cardInputs")
+        var items = inputForm.querySelectorAll("[label]")
+        for (var i=0, max=items.length; i < max; i++) {
+          this.card[items[i].label] = items[i].value
+        }
+        if (this.__editedCardElement) {
+          this.__editedCardElement.style.opacity = 1
+          this.__editedCardElement = null
+        }
+        this.fire('close', detail, { bubbles: false })
+        this.$.dialog.close()
+      },
+      resetForm: function() {
+        this.set("inputFrom","")
+        this.set("inputFrom",this.getInputFrom(this.theTemplate))
+      },
+      add: function() {
+        this.resetForm()
+        this.open({})
+      },
+      open: function(card) {
+        this.resetForm()
+        if (card) {
+          this.card = card
+        }
+        this.async(this.getUpdateValues, 100)
+        this.$.dialog.open()
+      },
+      objectToArray: function(data) { //rewrite as .map
+        var output = []
+        if (data) {
+          var keys = Object.keys(data)
+          for (var i = 0; i < keys.length; i++) {
+            if (typeof data[keys[i]] === 'object') {
+              data[keys[i]]["__key"] = keys[i]
+              output.push(data[keys[i]])
+            }
+          }
+        }
+        return output
+      }
+    })
+  </script>
+</dom-module>
