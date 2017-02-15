@@ -7,9 +7,6 @@
 <dom-module id="deko-deck-editor">
   <template>
     <style>
-      #cardInputs {
-        margin: 15px
-      }
       .templateButtons {
         text-align: center;
         margin-top: 40px;
@@ -28,11 +25,11 @@
     </template>
     <paper-dialog id="dialog" modal>
       <paper-dialog-scrollable>
-        <paper-input value="{{deck.title}}"></paper-input>
+        <paper-input value="{{deck.title}}" label="Name the Deck"></paper-input>
         <paper-swatch-picker color="{{deck.color}}"></paper-swatch-picker>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button on-tap="delete" style="color: #333;">Delete</paper-button>
+        <paper-button on-tap="delete" style="color:#333">Delete</paper-button>
         <paper-button dialog-dismiss>Cancel</paper-button>
         <paper-button on-tap="save" raised style="background:#ff4081;color:#fff">Save</paper-button>
       </div>
