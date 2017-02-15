@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <title>deko-deck-editor</title>
+    <script src="../../webcomponentsjs/webcomponents.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+    <script src="../../iron-test-helpers/mock-interactions.js"></script>
+    <link rel="import" href="../../polymer/polymer.html">
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+    <link rel="import" href="../deko-deck-editor.html">
+  </head>
+  <body>
+    <test-fixture id="dekoDeckEditor">
+      <template>
+        <deko-deck-editor></deko-deck-editor> //TODO add attributes
+      </template>
+    </test-fixture>
+    <script>
+      suite('<deko-deck-editor>', function () {
+        var dekoDeckEditor;
+        setup(function () {
+          dekoDeckEditor = fixture('dekoDeckEditor');
+        });
+        teardown(function () {
+          //...
+        });
+        suite("This test is just to show that tests are running", function () {
+          test("test is running", function(done) {
+            done()
+          })
+        })
+        suite('These test allow you to interact with the element', function () {
+          test('can be triggered with space', function(done) {
+            dekoDeckEditor.addEventListener('keydown', function() {
+              done()
+            })
+            MockInteractions.pressSpace(dekoDeckEditor)
+          })
+          test('can be clicked', function(done) {
+            dekoDeckEditor.addEventListener('click', function() {
+              done()
+            })
+            MockInteractions.tap(dekoDeckEditor)
+          })
+        })
+      })
+    </script>
+  </body>
+</html>
