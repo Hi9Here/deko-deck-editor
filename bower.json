@@ -9,13 +9,11 @@
   ],
   "dependencies": {
     "input-image": "marcus7777/input-image",
-    "iron-icon": "PolymerElements/iron-icon",
+    "iron-icons": "PolymerElements/iron-icons",
     "paper-button": "PolymerElements/paper-button#~1.0.14",
     "paper-fab": "PolymerElements/paper-fab",
-    "paper-button-group": "Protoss78/paper-button-group#~0.0.1",
     "paper-dialog-scrollable": "*",
     "paper-dialog": "PolymerElements/paper-dialog",
-    "card-info-link-input": "marcus7777/card-info-link-input"
   },
   "devDependencies": {
     "iron-test-helpers": "*",
