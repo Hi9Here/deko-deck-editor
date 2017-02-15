@@ -1,7 +1,6 @@
 {
   "name": "deko-deck-editor",
   "version": "1.0.0",
-  "description": "",
   "main": "deko-deck-editor.html",
   "keywords": [
     "polymer",
