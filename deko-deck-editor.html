@@ -1,15 +1,8 @@
 <link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
-<link rel="import" href="../card-info-link-input/card-info-link-input.html">
-<link rel="import" href="../paper-button-group/paper-button-group.html">
-<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../link-display/link-display.html">
-<link rel="import" href="../paper-input/paper-textarea.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../input-image/input-image.html">
 <link rel="import" href="../paper-fab/paper-fab.html">
-<link rel="import" href="../paper-styles/color.html">
 <dom-module id="deko-deck-editor">
   <template>
     <style>
@@ -34,17 +27,13 @@
     </template>
     <paper-dialog id="dialog" modal>
       <paper-dialog-scrollable>
-        <paper-button-group selected="{{useTemplate}}">
-          <template is="dom-repeat" items="{{objectToArray(theTemplates)}}">
-            <paper-button name="{{item.$key}}" raised><iron-icon icon="{{item.icon}}"></iron-icon></paper-button>
-          </template>
-        </paper-button-group>
-        <div id="cardInputs" inner-h-t-m-l="[[inputFrom]]"></div>
+        <paper-input value="{{deck.title}}"></paper-input>
+        <paper-swatch-picker color="{{deck.color}}"></paper-swatch-picker>
       </paper-dialog-scrollable>
       <div class="buttons">
         <paper-button on-tap="delete" style="color: #333;">Delete</paper-button>
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button on-tap="save" raised style="background: #ff4081; color: #fff;">Save</paper-button>
+        <paper-button on-tap="save" raised style="background:#ff4081;color:#fff">Save</paper-button>
       </div>
     </paper-dialog>
   </template>
@@ -52,7 +41,7 @@
     Polymer({
       is: 'deko-deck-editor',
       properties: {
-        card: {
+        deck: {
           type: Object,
           notify: true,
         },
@@ -67,63 +56,10 @@
           type:Boolean,
           value:false,
         },
-        useTemplates: {
-          type: Object
-        },
-        useTemplate: {
-          value:"link"
-        },
-        theTemplates: {
-          value:{
-            link: {
-              input: "<card-info-link-input label=\"link\"></card-info-link-input>", 
-              icon: "bookmark",
-              cardType: "link-display",
-            },
-          }
-        },
-        theTemplate: {
-          computed: "setTemplate(useTemplate, usedTemplate, theTemplates, useTemplates)"
-        }
       },
       getInputFrom: function(form) {
         this.async(this.getUpdateValues, 100) // let it load
         return form
-      },
-      getUsedTemplate: function(theTemplates, card, useTemplates) {
-        if (!useTemplates) {
-          return this.objectToArray(theTemplates)[0]["__key"]
-        } else {
-          if (typeof useTemplates === "string") {
-            useTemplates = JSON.parse(useTemplates)
-          }
-          return this.objectToArray(useTemplates)[0]["__key"]
-        }
-        // rem \/
-        return this.objectToArray(theTemplates).reduce(function(previousValue, currentValue){
-          if (currentValue.output == card.output) {
-            return currentValue["$key"]
-          } else {
-            return previousValue
-          }
-        }, "")
-      },
-      setTemplate: function(useTemplate, usedTemplate, theTemplates, useTemplates) {
-        if (!this.card){
-          this.card = {}
-        }
-        if (useTemplates) {
-          if (typeof useTemplates === "string") {
-            useTemplates = JSON.parse(useTemplates)
-          }
-          this.card.cardType = useTemplates[useTemplate].cardType
-          return this.card.input = useTemplates[useTemplate].input
-        } else if (useTemplate) {
-          this.card.cardType = theTemplates[useTemplate].cardType
-          return this.card.input = theTemplates[useTemplate].input
-        } else if (this.card.input) {
-          return this.card.input
-        }
       },
       getUpdateValues: function(card) {
         if (card) {
@@ -143,34 +79,12 @@
         }
       },
       save: function() {
-        if (!this.card){
-          this.card = {}
-        }
-        if (this.card.cardIcon) {
-          delete(this.card.cardIcon)
-        }
-        var inputForm = this.$$("#cardInputs")
-        var items = inputForm.querySelectorAll("[label]")
-        for (var i=0, max=items.length; i < max; i++) {
-          if (items[i].value) {
-            this.card[items[i].label] = items[i].value
-          }
-        }
         this.close('save')
       },
       delete: function() {
         this.close('delete')
       },
       close: function(detail) {
-        var inputForm = this.$$("#cardInputs")
-        var items = inputForm.querySelectorAll("[label]")
-        for (var i=0, max=items.length; i < max; i++) {
-          this.card[items[i].label] = items[i].value
-        }
-        if (this.__editedCardElement) {
-          this.__editedCardElement.style.opacity = 1
-          this.__editedCardElement = null
-        }
         this.fire('close', detail, { bubbles: false })
         this.$.dialog.close()
       },
