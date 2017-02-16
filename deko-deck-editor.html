@@ -7,10 +7,6 @@
 <dom-module id="deko-deck-editor">
   <template>
     <style>
-      .templateButtons {
-        text-align: center;
-        margin-top: 40px;
-      }
       paper-button-group {
         margin: 15px;
       }
@@ -43,38 +39,10 @@
           type: Object,
           notify: true,
         },
-        inputFrom:String,
-        updateValues: {
-          computed: ("getUpdateValues(card.*)")
-        },
-        usedTemplate: {
-          computed: "getUsedTemplate(theTemplates, card, useTemplates)"
-        },
         noAdd:{
           type:Boolean,
           value:false,
         },
-      },
-      getInputFrom: function(form) {
-        this.async(this.getUpdateValues, 100) // let it load
-        return form
-      },
-      getUpdateValues: function(card) {
-        if (card) {
-          this.async(this.getUpdateValues, 100) // let it load
-        } else {
-          if (!this.card) {
-            this.card = {}
-          }
-          var inputForm = this.$$("#cardInputs")
-          var items = inputForm.querySelectorAll("[label]")
-          for (var i=0, max=items.length; i < max; i++) {
-            if (this.card.hasOwnProperty(items[i].label)) {
-              items[i].value = this.card[items[i].label]
-            }
-          }
-          return "Done"
-        }
       },
       save: function() {
         this.close('save')
@@ -87,8 +55,6 @@
         this.$.dialog.close()
       },
       resetForm: function() {
-        this.set("inputFrom","")
-        this.set("inputFrom",this.getInputFrom(this.theTemplate))
       },
       add: function() {
         this.resetForm()
@@ -99,7 +65,6 @@
         if (card) {
           this.card = card
         }
-        this.async(this.getUpdateValues, 100)
         this.$.dialog.open()
       },
       objectToArray: function(data) { //rewrite as .map
