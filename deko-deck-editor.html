@@ -60,10 +60,10 @@
         this.resetForm()
         this.open({})
       },
-      open: function(card) {
+      open: function(deck) {
         this.resetForm()
-        if (card) {
-          this.card = card
+        if (deck) {
+          this.deck = deck
         }
         this.$.dialog.open()
       },
