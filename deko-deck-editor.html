@@ -13,13 +13,15 @@
     <paper-dialog id="dialog" modal>
       <paper-dialog-scrollable>
         <paper-input value="{{deck.name}}" label="Name the Deck"></paper-input>
-        <paper-input value="{{deck.url}}" label="Requested path (url)"></paper-input>
+        <paper-input value="{{deck.url}}" prevent-invalid-input label="Requested path (url)" pattern="[a-zA-Z0-9]+" auto-validate invalid="{{invalid}}"></paper-input>
         <paper-swatch-picker color="{{deck.color}}"></paper-swatch-picker>
       </paper-dialog-scrollable>
       <div class="buttons">
+        <template is="dom-if" if="[[invalid]]">
+          <paper-button on-tap="save" raised style="background:#ff4081;color:#fff">Save</paper-button>
+        </template>
         <paper-button on-tap="delete" style="color:#333">Delete</paper-button>
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button on-tap="save" raised style="background:#ff4081;color:#fff">Save</paper-button>
       </div>
     </paper-dialog>
   </template>
