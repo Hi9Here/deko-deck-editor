@@ -17,7 +17,7 @@
         <paper-swatch-picker color="{{deck.color}}"></paper-swatch-picker>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <template is="dom-if" if="[[invalid]]">
+        <template is="dom-if" if="[[!invalid]]">
           <paper-button on-tap="save" raised style="background:#ff4081;color:#fff">Save</paper-button>
         </template>
         <paper-button on-tap="delete" style="color:#333">Delete</paper-button>
